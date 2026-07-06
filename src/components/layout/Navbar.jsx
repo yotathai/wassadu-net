@@ -1,21 +1,28 @@
-import React from 'react';
+"use client";
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { Search, User, Menu, Bell, Sparkles } from 'lucide-react';
+import { Search, User, Menu, Bell, Sparkles, X } from 'lucide-react';
 
 export default function Navbar() {
+  const [isLogoModalOpen, setIsLogoModalOpen] = useState(false);
+  
   return (
     <header className="fixed top-0 inset-x-0 z-50 w-full border-b border-orange-100 bg-white/80 backdrop-blur-xl supports-[backdrop-filter]:bg-white/60 shadow-sm">
       <div className="container mx-auto px-4 h-20 flex items-center justify-between">
         {/* Logo Section */}
         <div className="flex items-center gap-8">
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative flex items-center justify-center w-12 h-12 rounded-xl bg-white shadow-sm overflow-hidden group-hover:shadow-md transition-all duration-300">
+          <div className="flex items-center gap-3 group">
+            <div 
+              onClick={() => setIsLogoModalOpen(true)}
+              className="cursor-pointer relative flex items-center justify-center w-12 h-12 rounded-xl bg-white shadow-sm overflow-hidden hover:shadow-orange-500/30 transition-all duration-300 hover:scale-105 ring-1 ring-slate-100 hover:ring-orange-200 z-10"
+              title="คลิกเพื่อดูโลโก้ขนาดใหญ่"
+            >
               <img src="/logo.jpg" alt="Wassadu.net Logo" className="w-full h-full object-contain mix-blend-multiply scale-150" />
             </div>
-            <span className="font-bold text-2xl tracking-tight hidden sm:inline-block text-slate-800">
+            <Link href="/" className="font-bold text-2xl tracking-tight hidden sm:inline-block text-slate-800 hover:opacity-80 transition-opacity">
               Wassadu<span className="text-orange-500">.net</span>
-            </span>
-          </Link>
+            </Link>
+          </div>
           
           <nav className="hidden lg:flex items-center gap-8 text-sm font-medium">
             <Link href="/categories" className="text-slate-600 hover:text-orange-600 transition-colors relative group">
@@ -82,6 +89,35 @@ export default function Navbar() {
           </button>
         </div>
       </div>
+
+      {/* Logo Modal */}
+      {isLogoModalOpen && (
+        <div 
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/80 backdrop-blur-sm p-4 animate-in fade-in duration-200"
+          onClick={() => setIsLogoModalOpen(false)}
+        >
+          <div 
+            className="relative max-w-3xl w-full bg-white rounded-3xl shadow-2xl p-8 overflow-hidden animate-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button 
+              onClick={() => setIsLogoModalOpen(false)}
+              className="absolute top-4 right-4 p-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 transition-colors z-10"
+            >
+              <X className="w-6 h-6" />
+            </button>
+            <div className="relative w-full aspect-[16/9] flex items-center justify-center bg-white rounded-2xl">
+              <img src="/logo.jpg" alt="Wassadu.net Logo Large" className="max-w-full max-h-full object-contain drop-shadow-xl" />
+            </div>
+            <div className="text-center mt-6">
+              <h2 className="text-3xl font-bold tracking-tight text-slate-800">
+                Wassadu<span className="text-orange-500">.net</span>
+              </h2>
+              <p className="text-slate-500 mt-2 font-medium">สุดยอดศูนย์รวมวัสดุก่อสร้าง B2B & B2G Platform ระดับชาติ</p>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 }
