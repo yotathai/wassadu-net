@@ -9,8 +9,8 @@ export default function Navbar() {
         {/* Logo Section */}
         <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 shadow-md shadow-orange-500/20 group-hover:shadow-orange-500/40 transition-all duration-300">
-              <span className="font-bold text-2xl text-white">W</span>
+            <div className="relative flex items-center justify-center w-12 h-12 rounded-xl bg-white shadow-sm overflow-hidden group-hover:shadow-md transition-all duration-300">
+              <img src="/logo.jpg" alt="Wassadu.net Logo" className="w-full h-full object-contain mix-blend-multiply scale-150" />
             </div>
             <span className="font-bold text-2xl tracking-tight hidden sm:inline-block text-slate-800">
               Wassadu<span className="text-orange-500">.net</span>
