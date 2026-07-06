@@ -30,13 +30,13 @@ export default function CategoryGrid() {
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
           <div>
             <div className="inline-block px-3 py-1 rounded-full bg-orange-100 text-orange-600 font-semibold text-sm mb-4 shadow-sm">
-              หมวดหมู่วัสดุก่อสร้างระดับชาติ
+              หมวดหมู่วัสดุก่อสร้างอ้างอิง
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-4 tracking-tight">
               ค้นหาแยกตาม <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-amber-500">หมวดหมู่งานก่อสร้าง</span>
             </h2>
             <p className="text-slate-500 max-w-2xl text-lg">
-              อ้างอิงโครงสร้างหมวดหมู่เพื่อการสืบราคากลางที่ถูกต้อง และเปิดโอกาสให้ร้านค้าทั่วประเทศนำเสนอราคาวัสดุก่อสร้างได้โดยตรง
+              อ้างอิงโครงสร้างหมวดหมู่เพื่อการสืบราคากลาง และเปิดให้ร้านค้าทั่วประเทศนำเสนอราคาวัสดุก่อสร้างได้โดยตรง
             </p>
           </div>
           <Link href="/categories" className="group flex items-center gap-2 px-6 py-3 bg-white hover:bg-orange-50 border border-orange-200 rounded-xl text-orange-600 font-semibold transition-all duration-300 shadow-sm hover:shadow-md">

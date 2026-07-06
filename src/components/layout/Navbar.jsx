@@ -115,7 +115,7 @@ export default function Navbar() {
               <h2 className="text-3xl font-bold tracking-tight text-slate-800">
                 Wassadu<span className="text-orange-500">.net</span>
               </h2>
-              <p className="text-slate-500 mt-2 font-medium">สุดยอดศูนย์รวมวัสดุก่อสร้าง B2B & B2G Platform ระดับชาติ</p>
+              <p className="text-slate-500 mt-2 font-medium">แพลตฟอร์มข้อมูลและเปรียบเทียบราคาวัสดุก่อสร้าง (B2B & B2G)</p>
             </div>
           </div>
         </div>
