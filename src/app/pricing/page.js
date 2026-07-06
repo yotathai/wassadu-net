@@ -29,7 +29,7 @@ export default function PricingPage() {
                 <Calculator className="w-4 h-4 text-amber-400" /> คำนวณง่าย
               </div>
               <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-lg">
-                <FileText className="w-4 h-4 text-amber-400" /> พิมพ์รายงาน บก.06 ได้ทันที
+                <FileText className="w-4 h-4 text-amber-400" /> พิมพ์เอกสารสืบราคาได้ทันที
               </div>
               <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-lg">
                 <CheckCircle className="w-4 h-4 text-amber-400" /> โปร่งใส ตรวจสอบได้

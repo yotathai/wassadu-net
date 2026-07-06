@@ -25,7 +25,7 @@ export default function ComparisonTable({ data }) {
           </div>
           <button className="flex-shrink-0 flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-white px-5 py-2.5 rounded-xl font-medium transition-colors">
             <Download className="w-4 h-4" />
-            <span>พิมพ์รายงานสืบราคา (บก.06)</span>
+            <span>พิมพ์ตารางเปรียบเทียบราคา</span>
           </button>
         </div>
       </div>
