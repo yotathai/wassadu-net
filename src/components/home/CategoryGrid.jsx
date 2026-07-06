@@ -4,7 +4,7 @@ import {
   Building2, Layers, Home, Blocks, Grid, 
   PaintBucket, Droplets, Bath, Zap, DoorOpen, HardHat 
 } from 'lucide-react';
-import { categories } from '@/data/mockData';
+import { CATEGORIES } from '@/data/mockData';
 
 const iconMap = {
   Building2: <Building2 className="w-8 h-8 text-orange-500 mb-4 transition-transform group-hover:scale-110 group-hover:-translate-y-1" />,
@@ -46,7 +46,7 @@ export default function CategoryGrid() {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
-          {categories.map((category) => (
+          {CATEGORIES.map((category) => (
             <Link 
               key={category.id}
               href={`/categories/${category.id}`} 

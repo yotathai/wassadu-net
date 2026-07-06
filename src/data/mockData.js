@@ -1,4 +1,4 @@
-export const categories = [
+export const CATEGORIES = [
   {
     id: 'structural-concrete',
     name: 'งานโครงสร้างและคอนกรีต',
@@ -131,6 +131,8 @@ export const categories = [
     ]
   }
 ];
+
+export const MOCK_PRODUCTS = [];
 
 export const priceComparisonData = {
   'cement-portland-50kg': {
