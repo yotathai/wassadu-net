@@ -23,16 +23,6 @@ export default function HeroSection() {
       <div className="container mx-auto px-4 relative z-10 py-20">
         <div className="max-w-5xl mx-auto text-center space-y-10">
           
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-orange-200 text-slate-700 font-medium text-sm mb-4 shadow-sm hover:shadow-md transition-shadow cursor-default">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
-            </span>
-            <span>ระบบสืบราคากลาง e-GP แห่งชาติ</span>
-            <span className="w-px h-4 bg-slate-200 mx-1"></span>
-            <span className="text-orange-600 flex items-center gap-1"><Zap className="w-3 h-3"/> B2B & B2G Ready</span>
-          </div>
 
           {/* Main Headline */}
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight text-slate-900 leading-[1.1]">
