@@ -45,11 +45,17 @@ export default async function CategoryDetailPage({ params }) {
             
             <div className="space-y-4">
               <div>
-                <h4 className="font-semibold text-sm mb-2 text-foreground/80">รองรับ e-GP</h4>
-                <label className="flex items-center gap-2 text-sm cursor-pointer">
-                  <input type="checkbox" className="rounded text-primary focus:ring-primary" />
-                  เฉพาะสินค้า e-GP
-                </label>
+                <h4 className="font-semibold text-sm mb-2 text-foreground/80">มาตรฐานสินค้า (สำหรับงานราชการ)</h4>
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-sm cursor-pointer">
+                    <input type="checkbox" className="rounded text-primary focus:ring-primary" />
+                    เฉพาะสินค้า มอก.
+                  </label>
+                  <label className="flex items-center gap-2 text-sm cursor-pointer">
+                    <input type="checkbox" className="rounded text-primary focus:ring-primary" />
+                    เฉพาะสินค้า MiT (Made in Thailand)
+                  </label>
+                </div>
               </div>
               
               <div className="pt-4 border-t border-border/60">

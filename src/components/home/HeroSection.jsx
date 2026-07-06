@@ -69,8 +69,8 @@ export default function HeroSection() {
                 <ShieldCheck className="h-5 w-5 text-slate-400 shrink-0" />
                 <select className="bg-transparent text-slate-600 outline-none px-3 py-2 cursor-pointer hover:text-orange-600 transition-colors">
                   <option value="all">หมวดหมู่ทั้งหมด</option>
-                  <option value="egp">เฉพาะสินค้า e-GP</option>
-                  <option value="b2b">ราคาขายส่ง B2B</option>
+                  <option value="tis">เฉพาะสินค้า มอก.</option>
+                  <option value="mit">เฉพาะสินค้า MiT</option>
                 </select>
               </div>
               
