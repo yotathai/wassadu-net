@@ -1,38 +1,99 @@
-import React from 'react';
+"use client";
+
+import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/layout/Navbar';
-import ComparisonTable from '@/components/product/ComparisonTable';
-import { priceComparisonData } from '@/data/mockData';
-import { Scale, Calculator, FileText, CheckCircle } from 'lucide-react';
+import { Scale, Search, Filter, Loader2, Package, MapPin, Building2 } from 'lucide-react';
+import { db } from '@/lib/firebase/config';
+import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import Link from 'next/link';
 
 export default function PricingPage() {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
+  
+  const categories = [
+    'ทั้งหมด',
+    'เหล็กเส้นและเหล็กรูปพรรณ',
+    'ปูนซีเมนต์และคอนกรีต',
+    'กระเบื้องและวัสดุปูพื้น',
+    'ท่อประปาและอุปกรณ์',
+    'สายไฟและอุปกรณ์ไฟฟ้า',
+    'สีและเคมีภัณฑ์',
+    'ไม้และไม้อัด',
+    'หลังคาและอุปกรณ์',
+    'อื่นๆ'
+  ];
+
+  useEffect(() => {
+    async function fetchAllProducts() {
+      try {
+        const q = query(collection(db, 'products')); // get all products
+        const querySnapshot = await getDocs(q);
+        
+        // Fetch vendor info (in a real large-scale app, we'd denormalize vendor names into the product doc to avoid N+1 queries, but for now we'll fetch users or just display generic)
+        // Wait, we can fetch all users who are vendors to map their names
+        const usersSnapshot = await getDocs(collection(db, 'users'));
+        const usersMap = {};
+        usersSnapshot.forEach(doc => {
+          usersMap[doc.id] = doc.data();
+        });
+
+        const productsList = querySnapshot.docs.map(doc => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            ...data,
+            vendorName: usersMap[data.vendorId]?.name || 'ร้านค้าทั่วไป'
+          };
+        });
+        
+        setProducts(productsList);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    fetchAllProducts();
+  }, []);
+
+  const filteredProducts = products.filter(p => {
+    const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                          (p.brand && p.brand.toLowerCase().includes(searchTerm.toLowerCase()));
+    const matchesCategory = selectedCategory === '' || selectedCategory === 'ทั้งหมด' || p.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
+
   return (
     <main className="min-h-screen bg-slate-50 pt-20">
       <Navbar />
       
-      {/* Hero Section for Pricing */}
-      <div className="bg-[#0B1120] text-white py-16 relative overflow-hidden">
+      {/* Hero Section */}
+      <div className="bg-[#0B1120] text-white py-12 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-amber-500/5 mix-blend-overlay"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-orange-400 text-sm font-semibold mb-6">
-              <Scale className="w-4 h-4" /> สำหรับคณะกรรมการกำหนดราคากลาง
-            </div>
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-              ระบบเปรียบเทียบ <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-amber-400">ราคากลางอ้างอิง</span>
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
+              สืบราคากลางวัสดุก่อสร้าง
             </h1>
-            <p className="text-lg text-slate-300 mb-8 leading-relaxed">
-              สืบราคาวัสดุก่อสร้างหลักเทียบกับราคาตลาด (Modern Trade) และราคาอ้างอิงจากสำนักดัชนีเศรษฐกิจการค้า เพื่อความโปร่งใส ถูกต้อง และลดความเสี่ยงในการถูก สตง. ตรวจสอบ
+            <p className="text-slate-300 mb-6">
+              ค้นหาและเปรียบเทียบราคาวัสดุก่อสร้างจากร้านค้าทั่วประเทศ เพื่อประกอบการทำราคากลาง
             </p>
             
-            <div className="flex flex-wrap gap-4 text-sm font-medium text-slate-300">
-              <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-lg">
-                <Calculator className="w-4 h-4 text-amber-400" /> คำนวณง่าย
-              </div>
-              <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-lg">
-                <FileText className="w-4 h-4 text-amber-400" /> พิมพ์เอกสารสืบราคาได้ทันที
-              </div>
-              <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-lg">
-                <CheckCircle className="w-4 h-4 text-amber-400" /> โปร่งใส ตรวจสอบได้
+            {/* Search Bar */}
+            <div className="flex flex-col sm:flex-row gap-3">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+                <input 
+                  type="text" 
+                  placeholder="ค้นหาชื่อวัสดุ, ยี่ห้อ, หรือสเปก..." 
+                  className="w-full pl-10 pr-4 py-3 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
               </div>
             </div>
           </div>
@@ -40,16 +101,104 @@ export default function PricingPage() {
       </div>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-12">
-        <div className="max-w-5xl mx-auto">
-          <div className="mb-10">
-            <h2 className="text-2xl font-bold text-slate-800 mb-2">ข้อมูลเปรียบเทียบราคาวัสดุหลัก (ประจำเดือน)</h2>
-            <p className="text-slate-500">เลือกดูการเปรียบเทียบราคาวัสดุก่อสร้างที่มีผลกระทบต่องบประมาณสูง (หมวดงานโครงสร้าง)</p>
-          </div>
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Sidebar Filters */}
+          <aside className="w-full lg:w-64 shrink-0">
+            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm sticky top-28">
+              <div className="flex items-center gap-2 mb-4">
+                <Filter className="w-5 h-5 text-slate-700" />
+                <h3 className="font-bold text-slate-800">หมวดหมู่สินค้า</h3>
+              </div>
+              <ul className="space-y-2">
+                {categories.map(cat => (
+                  <li key={cat}>
+                    <button 
+                      onClick={() => setSelectedCategory(cat)}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
+                        (selectedCategory === cat || (cat === 'ทั้งหมด' && selectedCategory === ''))
+                          ? 'bg-orange-50 text-orange-600 font-medium' 
+                          : 'text-slate-600 hover:bg-slate-50'
+                      }`}
+                    >
+                      {cat}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </aside>
 
-          <div className="space-y-8">
-            <ComparisonTable data={priceComparisonData['cement-portland-50kg']} />
-            <ComparisonTable data={priceComparisonData['rebar-db12-10m']} />
+          {/* Results List */}
+          <div className="flex-1">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-slate-800">
+                ผลการค้นหา {searchTerm && `"${searchTerm}"`}
+              </h2>
+              <span className="text-slate-500 text-sm">พบ {filteredProducts.length} รายการ</span>
+            </div>
+
+            {loading ? (
+              <div className="flex flex-col items-center justify-center py-20 bg-white rounded-xl border border-slate-200">
+                <Loader2 className="w-8 h-8 animate-spin text-orange-500 mb-4" />
+                <p className="text-slate-500">กำลังโหลดข้อมูลสินค้า...</p>
+              </div>
+            ) : filteredProducts.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-20 bg-white rounded-xl border border-slate-200">
+                <Package className="w-12 h-12 text-slate-300 mb-4" />
+                <h3 className="text-lg font-medium text-slate-700 mb-1">ไม่พบสินค้าที่คุณค้นหา</h3>
+                <p className="text-slate-500 text-sm">ลองเปลี่ยนคำค้นหา หรือเลือกหมวดหมู่ใหม่</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {filteredProducts.map(product => (
+                  <div key={product.id} className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col sm:flex-row gap-5">
+                    {/* Product Image */}
+                    <div className="w-full sm:w-40 h-40 shrink-0 bg-slate-100 rounded-lg overflow-hidden border border-slate-200 flex items-center justify-center">
+                      {product.imageUrl ? (
+                        <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <Package className="w-10 h-10 text-slate-300" />
+                      )}
+                    </div>
+                    
+                    {/* Product Info */}
+                    <div className="flex-1 flex flex-col">
+                      <div className="flex justify-between items-start gap-4">
+                        <div>
+                          <span className="inline-block px-2.5 py-1 bg-slate-100 text-slate-600 text-xs font-medium rounded-full mb-2">
+                            {product.category}
+                          </span>
+                          <h3 className="text-lg font-bold text-slate-900 leading-tight mb-1">
+                            {product.name}
+                          </h3>
+                          {product.brand && (
+                            <p className="text-sm text-slate-500 mb-2">แบรนด์: {product.brand}</p>
+                          )}
+                        </div>
+                        <div className="text-right shrink-0">
+                          <div className="text-2xl font-bold text-orange-600">฿{product.price?.toLocaleString()}</div>
+                          <div className="text-sm text-slate-500">/ {product.unit}</div>
+                        </div>
+                      </div>
+                      
+                      <div className="mt-auto pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-4">
+                        <div className="flex items-center gap-2 text-sm text-slate-600">
+                          <Building2 className="w-4 h-4 text-slate-400" />
+                          <span>{product.vendorName}</span>
+                        </div>
+                        <Link 
+                          href={`/products/${product.id}`}
+                          className="px-4 py-2 bg-white border border-slate-300 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 hover:text-orange-600 hover:border-orange-200 transition-colors"
+                        >
+                          ดูรายละเอียด
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
