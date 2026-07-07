@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 
 const CompareContext = createContext();
 
@@ -34,19 +35,22 @@ export function CompareProvider({ children }) {
       if (prev.find(item => item.id === product.id)) return prev;
       // Max 3 items
       if (prev.length >= 3) {
-        alert("เปรียบเทียบสินค้าได้สูงสุด 3 รายการ");
+        toast.error("เปรียบเทียบสินค้าได้สูงสุด 3 รายการ");
         return prev;
       }
+      toast.success(`เพิ่ม "${product.name}" ลงในตารางเปรียบเทียบแล้ว`);
       return [...prev, product];
     });
   };
 
   const removeFromCompare = (productId) => {
     setCompareItems((prev) => prev.filter(item => item.id !== productId));
+    toast.success("ลบออกจากตารางเปรียบเทียบแล้ว", { icon: '🗑️' });
   };
 
   const clearCompare = () => {
     setCompareItems([]);
+    toast.success("ล้างข้อมูลเปรียบเทียบทั้งหมดแล้ว", { icon: '🧹' });
   };
 
   const isComparing = (productId) => {

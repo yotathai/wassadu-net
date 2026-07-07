@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
+import toast from 'react-hot-toast';
 
 export default function RegisterPage() {
   const [name, setName] = useState('');
@@ -26,15 +27,18 @@ export default function RegisterPage() {
       setError('');
       setLoading(true);
       await register(email, password, name);
+      toast.success('สมัครสมาชิกสำเร็จ! ยินดีต้อนรับครับ');
       router.push('/'); // Redirect to home after successful registration
     } catch (err) {
       console.error(err);
       switch(err.code) {
         case 'auth/email-already-in-use':
           setError('อีเมลนี้ถูกใช้งานแล้ว');
+          toast.error('อีเมลนี้ถูกใช้งานแล้ว');
           break;
         case 'auth/weak-password':
           setError('รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร');
+          toast.error('รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร');
           break;
         default:
           setError('เกิดข้อผิดพลาดในการสมัครสมาชิก กรุณาลองใหม่อีกครั้ง');

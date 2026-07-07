@@ -7,6 +7,7 @@ import { db } from '@/lib/firebase/config';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import Link from 'next/link';
 import { useCompare } from '@/contexts/CompareContext';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function PricingPage() {
   const [products, setProducts] = useState([]);
@@ -142,9 +143,30 @@ export default function PricingPage() {
             </div>
 
             {loading ? (
-              <div className="flex flex-col items-center justify-center py-20 bg-white rounded-xl border border-slate-200">
-                <Loader2 className="w-8 h-8 animate-spin text-orange-500 mb-4" />
-                <p className="text-slate-500">กำลังโหลดข้อมูลสินค้า...</p>
+              <div className="space-y-4">
+                {[1, 2, 3].map((i) => (
+                  <motion.div 
+                    key={i} 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.1 }}
+                    className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row gap-5"
+                  >
+                    <div className="w-full sm:w-40 h-40 shrink-0 bg-slate-200 animate-pulse rounded-lg"></div>
+                    <div className="flex-1 flex flex-col">
+                      <div className="w-20 h-6 bg-slate-200 animate-pulse rounded-full mb-2"></div>
+                      <div className="w-3/4 h-8 bg-slate-200 animate-pulse rounded-lg mb-2"></div>
+                      <div className="w-1/2 h-5 bg-slate-200 animate-pulse rounded-lg mb-4"></div>
+                      <div className="mt-auto pt-4 border-t border-slate-100 flex justify-between">
+                        <div className="w-32 h-6 bg-slate-200 animate-pulse rounded-lg"></div>
+                        <div className="flex gap-2">
+                          <div className="w-24 h-9 bg-slate-200 animate-pulse rounded-lg"></div>
+                          <div className="w-24 h-9 bg-slate-200 animate-pulse rounded-lg"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
               </div>
             ) : filteredProducts.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20 bg-white rounded-xl border border-slate-200">
@@ -153,16 +175,36 @@ export default function PricingPage() {
                 <p className="text-slate-500 text-sm">ลองเปลี่ยนคำค้นหา หรือเลือกหมวดหมู่ใหม่</p>
               </div>
             ) : (
-              <div className="space-y-4">
+              <motion.div 
+                className="space-y-4"
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  hidden: { opacity: 0 },
+                  visible: {
+                    opacity: 1,
+                    transition: { staggerChildren: 0.1 }
+                  }
+                }}
+              >
                 {filteredProducts.map(product => (
-                  <div key={product.id} className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col sm:flex-row gap-5">
+                  <motion.div 
+                    key={product.id}
+                    variants={{
+                      hidden: { opacity: 0, y: 20 },
+                      visible: { opacity: 1, y: 0 }
+                    }}
+                    whileHover={{ scale: 1.01, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.05)" }}
+                    className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row gap-5 transition-all"
+                  >
                     {/* Product Image */}
-                    <div className="w-full sm:w-40 h-40 shrink-0 bg-slate-100 rounded-lg overflow-hidden border border-slate-200 flex items-center justify-center">
+                    <div className="w-full sm:w-40 h-40 shrink-0 bg-slate-100 rounded-lg overflow-hidden border border-slate-200 flex items-center justify-center relative group">
                       {product.imageUrl ? (
-                        <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
+                        <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                       ) : (
-                        <Package className="w-10 h-10 text-slate-300" />
+                        <Package className="w-10 h-10 text-slate-300 transition-transform duration-500 group-hover:scale-110" />
                       )}
+                      <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     </div>
                     
                     {/* Product Info */}
@@ -192,72 +234,94 @@ export default function PricingPage() {
                         </div>
                         <div className="flex items-center gap-2">
                           {isComparing(product.id) ? (
-                            <button 
+                            <motion.button 
+                              whileTap={{ scale: 0.95 }}
                               onClick={() => removeFromCompare(product.id)}
                               className="px-3 py-1.5 flex items-center gap-1 bg-orange-50 border border-orange-200 text-orange-600 text-sm font-medium rounded-lg hover:bg-orange-100 transition-colors"
                             >
                               <Check className="w-4 h-4" /> เลือกแล้ว
-                            </button>
+                            </motion.button>
                           ) : (
-                            <button 
+                            <motion.button 
+                              whileTap={{ scale: 0.95 }}
                               onClick={() => addToCompare(product)}
-                              className="px-3 py-1.5 flex items-center gap-1 bg-white border border-slate-300 text-slate-600 text-sm font-medium rounded-lg hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                              className="px-3 py-1.5 flex items-center gap-1 bg-white border border-slate-300 text-slate-600 text-sm font-medium rounded-lg hover:bg-slate-50 hover:text-slate-900 transition-colors shadow-sm"
                               disabled={compareItems.length >= 3}
                             >
                               <Plus className="w-4 h-4" /> เปรียบเทียบ
-                            </button>
+                            </motion.button>
                           )}
                           <Link 
                             href={`/products/${product.id}`}
-                            className="px-4 py-2 bg-slate-900 text-white text-sm font-medium rounded-lg hover:bg-slate-800 transition-colors"
+                            className="px-4 py-1.5 bg-slate-900 text-white text-sm font-medium rounded-lg hover:bg-slate-800 transition-colors shadow-sm shadow-slate-900/20"
                           >
                             ดูรายละเอียด
                           </Link>
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
-              </div>
+              </motion.div>
             )}
           </div>
         </div>
       </div>
 
       {/* Floating Compare Widget */}
-      {compareItems.length > 0 && (
-        <div className="fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom-5">
-          <div className="bg-white rounded-2xl shadow-2xl border border-orange-200 p-4 min-w-[300px]">
-            <div className="flex justify-between items-center mb-3">
-              <h3 className="font-bold text-slate-800 flex items-center gap-2">
-                <Scale className="w-5 h-5 text-orange-500" />
-                เปรียบเทียบสินค้า ({compareItems.length}/3)
-              </h3>
-            </div>
-            
-            <div className="space-y-2 mb-4">
-              {compareItems.map(item => (
-                <div key={item.id} className="flex justify-between items-center bg-slate-50 px-3 py-2 rounded-lg text-sm border border-slate-100">
-                  <span className="truncate pr-2 font-medium">{item.name}</span>
-                  <button 
-                    onClick={() => removeFromCompare(item.id)}
-                    className="text-slate-400 hover:text-red-500"
-                  >
-                    ✕
-                  </button>
-                </div>
-              ))}
-            </div>
+      <AnimatePresence>
+        {compareItems.length > 0 && (
+          <motion.div 
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 50, scale: 0.9 }}
+            transition={{ type: "spring", bounce: 0.4, duration: 0.6 }}
+            className="fixed bottom-6 right-6 z-50"
+          >
+            <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-[0_20px_50px_-12px_rgba(249,115,22,0.3)] border border-orange-200/50 p-4 min-w-[300px]">
+              <div className="flex justify-between items-center mb-3">
+                <h3 className="font-bold text-slate-800 flex items-center gap-2">
+                  <div className="p-1.5 bg-orange-100 rounded-lg">
+                    <Scale className="w-4 h-4 text-orange-600" />
+                  </div>
+                  เปรียบเทียบสินค้า ({compareItems.length}/3)
+                </h3>
+              </div>
+              
+              <div className="space-y-2 mb-4">
+                <AnimatePresence>
+                  {compareItems.map(item => (
+                    <motion.div 
+                      key={item.id} 
+                      initial={{ opacity: 0, height: 0, overflow: 'hidden' }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="flex justify-between items-center bg-white border border-slate-100 px-3 py-2 rounded-xl text-sm shadow-sm"
+                    >
+                      <span className="truncate pr-2 font-medium text-slate-700">{item.name}</span>
+                      <motion.button 
+                        whileHover={{ scale: 1.1, color: '#ef4444' }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => removeFromCompare(item.id)}
+                        className="text-slate-400 p-1 bg-slate-50 hover:bg-red-50 rounded-md transition-colors"
+                      >
+                        ✕
+                      </motion.button>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
 
-            <Link 
-              href="/compare"
-              className="w-full py-2.5 bg-orange-500 text-white font-bold rounded-xl flex items-center justify-center hover:bg-orange-600 transition-colors shadow-md shadow-orange-500/20"
-            >
-              ดูตารางเปรียบเทียบ
-            </Link>
-          </div>
-        </div>
-      )}
+              <Link 
+                href="/compare"
+                className="w-full py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 text-white font-bold rounded-xl flex items-center justify-center hover:from-orange-600 hover:to-amber-600 transition-all shadow-md shadow-orange-500/20 active:scale-95"
+              >
+                ดูตารางเปรียบเทียบ
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   );
 }

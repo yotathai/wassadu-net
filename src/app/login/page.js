@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
+import toast from 'react-hot-toast';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -20,10 +21,10 @@ export default function LoginPage() {
       setError('');
       setLoading(true);
       await login(email, password);
-      router.push('/'); // Redirect to home after successful login
+      toast.success('เข้าสู่ระบบสำเร็จ!');
+      router.push('/');
     } catch (err) {
-      console.error(err);
-      setError('อีเมลหรือรหัสผ่านไม่ถูกต้อง');
+      toast.error('อีเมลหรือรหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง');
     } finally {
       setLoading(false);
     }
