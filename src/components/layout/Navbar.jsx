@@ -1,11 +1,19 @@
 "use client";
 import React, { useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
 import { Search, User, Menu, Bell, Sparkles } from 'lucide-react';
 
 export default function Navbar() {
-
+  const { user, logout } = useAuth();
   
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
+  };
   return (
     <>
       <header className="fixed top-0 inset-x-0 z-50 w-full border-b border-orange-100 bg-white/80 backdrop-blur-xl supports-[backdrop-filter]:bg-white/60 shadow-sm">
@@ -75,12 +83,29 @@ export default function Navbar() {
             <div className="w-px h-6 bg-slate-200 hidden sm:block"></div>
 
             <div className="hidden sm:flex items-center gap-3">
-               <Link href="/login" className="text-sm font-medium text-slate-600 hover:text-orange-600 transition-colors px-2 py-1">
-                 เข้าสู่ระบบ
-               </Link>
-               <Link href="/register" className="text-sm font-semibold text-white bg-gradient-to-r from-orange-500 to-amber-500 px-5 py-2 rounded-full hover:from-orange-600 hover:to-amber-600 transition-all shadow-md shadow-orange-500/20 hover:shadow-orange-500/40 active:scale-95">
-                 สมัครสมาชิก
-               </Link>
+               {user ? (
+                 <div className="flex items-center gap-4">
+                   <div className="flex flex-col text-right">
+                     <span className="text-sm font-semibold text-slate-800">{user.displayName || 'สมาชิก'}</span>
+                     <span className="text-xs text-slate-500">{user.email}</span>
+                   </div>
+                   <button 
+                     onClick={handleLogout}
+                     className="text-sm font-medium text-red-500 hover:text-red-600 transition-colors px-3 py-1.5 border border-red-200 rounded-full hover:bg-red-50"
+                   >
+                     ออกจากระบบ
+                   </button>
+                 </div>
+               ) : (
+                 <>
+                   <Link href="/login" className="text-sm font-medium text-slate-600 hover:text-orange-600 transition-colors px-2 py-1">
+                     เข้าสู่ระบบ
+                   </Link>
+                   <Link href="/register" className="text-sm font-semibold text-white bg-gradient-to-r from-orange-500 to-amber-500 px-5 py-2 rounded-full hover:from-orange-600 hover:to-amber-600 transition-all shadow-md shadow-orange-500/20 hover:shadow-orange-500/40 active:scale-95">
+                     สมัครสมาชิก
+                   </Link>
+                 </>
+               )}
             </div>
 
             {/* Mobile Menu Button */}
