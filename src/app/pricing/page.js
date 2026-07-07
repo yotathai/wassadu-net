@@ -2,16 +2,19 @@
 
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/layout/Navbar';
-import { Scale, Search, Filter, Loader2, Package, MapPin, Building2 } from 'lucide-react';
+import { Scale, Search, Filter, Loader2, Package, MapPin, Building2, Plus, Check } from 'lucide-react';
 import { db } from '@/lib/firebase/config';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import Link from 'next/link';
+import { useCompare } from '@/contexts/CompareContext';
 
 export default function PricingPage() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
+  
+  const { compareItems, addToCompare, removeFromCompare, isComparing } = useCompare();
   
   const categories = [
     'ทั้งหมด',
@@ -187,12 +190,30 @@ export default function PricingPage() {
                           <Building2 className="w-4 h-4 text-slate-400" />
                           <span>{product.vendorName}</span>
                         </div>
-                        <Link 
-                          href={`/products/${product.id}`}
-                          className="px-4 py-2 bg-white border border-slate-300 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 hover:text-orange-600 hover:border-orange-200 transition-colors"
-                        >
-                          ดูรายละเอียด
-                        </Link>
+                        <div className="flex items-center gap-2">
+                          {isComparing(product.id) ? (
+                            <button 
+                              onClick={() => removeFromCompare(product.id)}
+                              className="px-3 py-1.5 flex items-center gap-1 bg-orange-50 border border-orange-200 text-orange-600 text-sm font-medium rounded-lg hover:bg-orange-100 transition-colors"
+                            >
+                              <Check className="w-4 h-4" /> เลือกแล้ว
+                            </button>
+                          ) : (
+                            <button 
+                              onClick={() => addToCompare(product)}
+                              className="px-3 py-1.5 flex items-center gap-1 bg-white border border-slate-300 text-slate-600 text-sm font-medium rounded-lg hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                              disabled={compareItems.length >= 3}
+                            >
+                              <Plus className="w-4 h-4" /> เปรียบเทียบ
+                            </button>
+                          )}
+                          <Link 
+                            href={`/products/${product.id}`}
+                            className="px-4 py-2 bg-slate-900 text-white text-sm font-medium rounded-lg hover:bg-slate-800 transition-colors"
+                          >
+                            ดูรายละเอียด
+                          </Link>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -202,6 +223,41 @@ export default function PricingPage() {
           </div>
         </div>
       </div>
+
+      {/* Floating Compare Widget */}
+      {compareItems.length > 0 && (
+        <div className="fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom-5">
+          <div className="bg-white rounded-2xl shadow-2xl border border-orange-200 p-4 min-w-[300px]">
+            <div className="flex justify-between items-center mb-3">
+              <h3 className="font-bold text-slate-800 flex items-center gap-2">
+                <Scale className="w-5 h-5 text-orange-500" />
+                เปรียบเทียบสินค้า ({compareItems.length}/3)
+              </h3>
+            </div>
+            
+            <div className="space-y-2 mb-4">
+              {compareItems.map(item => (
+                <div key={item.id} className="flex justify-between items-center bg-slate-50 px-3 py-2 rounded-lg text-sm border border-slate-100">
+                  <span className="truncate pr-2 font-medium">{item.name}</span>
+                  <button 
+                    onClick={() => removeFromCompare(item.id)}
+                    className="text-slate-400 hover:text-red-500"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            <Link 
+              href="/compare"
+              className="w-full py-2.5 bg-orange-500 text-white font-bold rounded-xl flex items-center justify-center hover:bg-orange-600 transition-colors shadow-md shadow-orange-500/20"
+            >
+              ดูตารางเปรียบเทียบ
+            </Link>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

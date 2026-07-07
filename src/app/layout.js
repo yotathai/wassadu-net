@@ -1,5 +1,6 @@
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { CompareProvider } from "@/contexts/CompareContext";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 
@@ -13,11 +14,13 @@ export default function RootLayout({ children }) {
     <html lang="th" className="antialiased">
       <body className="min-h-screen flex flex-col font-sans">
         <AuthProvider>
-          <Navbar />
-          <main className="flex-1 flex flex-col">
-            {children}
-          </main>
-          <Footer />
+          <CompareProvider>
+            <Navbar />
+            <main className="flex-1 flex flex-col">
+              {children}
+            </main>
+            <Footer />
+          </CompareProvider>
         </AuthProvider>
       </body>
     </html>
