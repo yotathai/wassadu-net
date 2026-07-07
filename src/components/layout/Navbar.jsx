@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Search, User, Menu, Bell, Sparkles } from 'lucide-react';
 
 export default function Navbar() {
-  const { user, logout } = useAuth();
+  const { user, role, logout } = useAuth();
   
   const handleLogout = async () => {
     try {
@@ -89,6 +89,14 @@ export default function Navbar() {
                      <span className="text-sm font-semibold text-slate-800">{user.displayName || 'สมาชิก'}</span>
                      <span className="text-xs text-slate-500">{user.email}</span>
                    </div>
+                   {role === 'admin' && (
+                     <Link 
+                       href="/admin" 
+                       className="text-sm font-medium text-white bg-slate-900 hover:bg-slate-800 transition-colors px-4 py-2 rounded-full shadow-md"
+                     >
+                       แผงควบคุม
+                     </Link>
+                   )}
                    <button 
                      onClick={handleLogout}
                      className="text-sm font-medium text-red-500 hover:text-red-600 transition-colors px-3 py-1.5 border border-red-200 rounded-full hover:bg-red-50"
