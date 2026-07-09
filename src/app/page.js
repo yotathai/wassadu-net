@@ -6,7 +6,7 @@ export default function Home() {
   return (
     <>
       {/* Development Banner */}
-      <div className="bg-gradient-to-r from-orange-600 to-amber-500 text-white text-center py-12 px-4 shadow-xl relative overflow-hidden">
+      <div className="bg-gradient-to-r from-orange-600 to-amber-500 text-white text-center pt-28 pb-12 px-4 shadow-xl relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
         <div className="relative z-10 max-w-4xl mx-auto space-y-4">
           <h1 className="text-4xl md:text-6xl font-black mb-4 drop-shadow-lg tracking-tight">
